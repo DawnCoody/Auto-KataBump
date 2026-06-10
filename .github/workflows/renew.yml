@@ -22,13 +22,23 @@ jobs:
       with:
         node-version: '20'
 
-    - name: Install Dependencies
+    - name: Install Chrome and Dependencies
       run: |
         sudo apt-get update
-        sudo apt-get install -y xvfb
+        # 安装 xvfb 和必要依赖
+        sudo apt-get install -y xvfb wget gnupg
+        # 安装 Google Chrome
+        wget -q -O - https://dl-ssl.google.com/linux/linux_signing_key.pub | sudo apt-key add -
+        sudo sh -c 'echo "deb [arch=amd64] http://dl.google.com/linux/chrome/deb/ stable main" >> /etc/apt/sources.list.d/google-chrome.list'
+        sudo apt-get update
+        sudo apt-get install -y google-chrome-stable
+        # 验证安装
+        google-chrome --version
+
+    - name: Install Dependencies
+      run: |
         npm install
-        npx playwright install-deps chrome
-      
+
     - name: Run Renew Script
       env:
         # 将 USERS_JSON 配置在 GitHub Repository Secrets 中
